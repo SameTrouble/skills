@@ -1,0 +1,20 @@
+{
+  "name": "sametrouble-skills",
+  "version": "0.2.0",
+  "description": "SameTrouble 的个人 Agent Skills 合集，包含面向 Codex 的子代理调度工作流。",
+  "author": {
+    "name": "SameTrouble"
+  },
+  "homepage": "https://github.com/SameTrouble/skills",
+  "repository": "https://github.com/SameTrouble/skills",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "SameTrouble Skills",
+    "shortDescription": "SameTrouble 的个人 Agent Skills 合集",
+    "longDescription": "一次安装仓库内的全部 skills。包含 adaptive-subagents：常规任务使用 gpt-6-luna xhigh，代码审查与困难任务继承主会话模型和思考强度，由主代理负责调度、集成和验收。",
+    "developerName": "SameTrouble",
+    "category": "Productivity",
+    "websiteURL": "https://github.com/SameTrouble/skills"
+  }
+}

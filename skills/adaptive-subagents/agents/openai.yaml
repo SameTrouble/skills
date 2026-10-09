@@ -1,0 +1,5 @@
+interface:
+  display_name: "Codex 子代理调度"
+  short_description: "常规任务使用 Luna xhigh，代码审查与困难任务继承主会话模型和思考强度"
+policy:
+  allow_implicit_invocation: true
