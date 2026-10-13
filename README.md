@@ -2,7 +2,7 @@
 
 用于存放和分享 SameTrouble 的个人 Agent Skills，支持以 Codex 合集插件安装，也支持通过 [`npx skills`](https://github.com/vercel-labs/skills) 从 GitHub 按需安装。
 
-当前包含面向 Codex 的子代理工作流：任务需要子代理且用户尚未指定策略时，由 `subagents-router` 先询问，再加载用户选择的策略。`adaptive-subagents` 按任务类型与难度使用 `gpt-6-luna max` 或继承主会话配置；`luna-subagents` 为常规子代理使用 `gpt-6-luna max`，代码审查继承主会话配置。主代理负责拆分、协调和集成验收；模型覆盖受当前工具能力和会话限制约束。
+当前包含面向 Codex 的 `subagent-config`：需要派发子代理时，先让用户选择当前工具支持的模型和思考强度，再按所选配置派发。本任务已明确的配置沿用，缺失项先询问；主代理负责协调、整合和验收。
 
 ## 目录结构
 
@@ -18,15 +18,7 @@ skills/
 ├── .gitignore
 └── skills/
     ├── .gitkeep
-    ├── adaptive-subagents/
-    │   ├── SKILL.md
-    │   └── agents/
-    │       └── openai.yaml
-    ├── luna-subagents/
-    │   ├── SKILL.md
-    │   └── agents/
-    │       └── openai.yaml
-    └── subagents-router/
+    └── subagent-config/
         ├── SKILL.md
         └── agents/
             └── openai.yaml
@@ -38,11 +30,9 @@ skills/
 
 | Skill | 用途 | 触发方式 |
 | --- | --- | --- |
-| [subagents-router](skills/subagents-router/SKILL.md) | 在启动子代理前询问用户采用哪种调度策略，并加载所选策略 | 子代理任务触发，先询问策略；也可显式使用 `$subagents-router` |
-| [adaptive-subagents](skills/adaptive-subagents/SKILL.md) | 按交付结果区分事实、执行、实现、审查与分析，再按实现或分析难度调度子代理 | 通过路由 skill 选择；也可显式使用 `$adaptive-subagents` |
-| [luna-subagents](skills/luna-subagents/SKILL.md) | 常规子代理使用 `gpt-6-luna` + `max`，代码审查继承主会话 | 通过路由 skill 选择；也可显式使用 `$luna-subagents` |
+| [subagent-config](skills/subagent-config/SKILL.md) | 派发前让用户选择子代理模型和思考强度，并在任务内沿用 | 需要派发子代理时自动使用；也可显式使用 `$subagent-config` |
 
-选择自适应策略时，单步小任务由主代理直接完成；需求清楚、范围局部、验收明确的工作使用 `gpt-6-luna max`；涉及跨模块设计、复杂并发、复杂根因或高风险改动的工作继承主会话。两种策略下，代码审查都继承主会话模型和思考强度。执行中发现任务超出预期难度时，由主代理接回或派发继承配置的子代理；`gpt-6-luna max` 不可用时，说明限制后继承主会话继续。策略不会修改全局模型配置。完整规则见 [adaptive-subagents](skills/adaptive-subagents/SKILL.md) 和 [luna-subagents](skills/luna-subagents/SKILL.md)。
+选择以当前子代理工具支持的模型和对应思考强度为准，也可明确选择继承主会话。用户未答复时不派发；配置不可用时说明限制并让用户重新选择。代码审查同样沿用用户所选配置。完整规则见 [subagent-config](skills/subagent-config/SKILL.md)。
 
 ## Codex 插件安装
 
@@ -63,7 +53,7 @@ codex plugin add sametrouble-skills@sametrouble
 codex plugin list --marketplace sametrouble
 ```
 
-安装后在新会话中使用已添加的 skills。建议安装路由 skill 和两种策略 skill；提交适合委派的任务时，路由 skill 会先询问策略。也可显式使用 `$adaptive-subagents` 或 `$luna-subagents` 直接选择策略。
+安装后在新会话中使用已添加的 skills。需要派发子代理时，`subagent-config` 会先询问模型和思考强度；也可显式使用 `$subagent-config`。
 
 ### Codex 桌面端
 
@@ -116,12 +106,10 @@ npx skills add SameTrouble/skills --list
 npx skills add SameTrouble/skills
 
 # 安装指定 skill
-npx skills add SameTrouble/skills --skill subagents-router
-npx skills add SameTrouble/skills --skill adaptive-subagents
-npx skills add SameTrouble/skills --skill luna-subagents
+npx skills add SameTrouble/skills --skill subagent-config
 ```
 
-子代理工作流需安装 `subagents-router` 与所选策略，并选择 Codex 作为目标 agent。策略依赖 Codex 子代理工具及其模型与思考强度设置能力。如需安装到用户目录，可添加 `--global` 参数。完整选项见 [CLI 官方文档](https://github.com/vercel-labs/skills#options)。
+安装 `subagent-config` 时选择 Codex 作为目标 agent。该 skill 依赖 Codex 子代理工具及其模型与思考强度设置能力。如需安装到用户目录，可添加 `--global` 参数。完整选项见 [CLI 官方文档](https://github.com/vercel-labs/skills#options)。
 
 ## 新增 Skill
 

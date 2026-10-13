@@ -1,5 +1,0 @@
-interface:
-  display_name: "自适应子代理策略"
-  short_description: "按任务类型与难度使用 Luna max 或继承主会话配置"
-policy:
-  allow_implicit_invocation: false

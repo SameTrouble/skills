@@ -1,5 +1,0 @@
-interface:
-  display_name: "子代理策略路由"
-  short_description: "需要子代理时先询问策略，再加载所选调度规则"
-policy:
-  allow_implicit_invocation: true
